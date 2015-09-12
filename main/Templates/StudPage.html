@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>{{name}} - Feedback Panel</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive-calendar.css' %}" rel="stylesheet" media="screen">
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"</script>
+    <script src="{% static 'js/responsive-calendar.js' %}"></script>
+    
+	</head>
+	<body>
+<!-- Header -->
+<script></script>
+<div id="top-nav" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-toggle"></span>
+      </button>
+            <a class="navbar-brand logo" href="http://www.iitg.ernet.in">
+                <ul class="list-inline">
+                    <li><img src="{% static 'img/iitg_logo_cutout.gif' %}" height="30px" width="30px" alt="IIT Guwahati Logo"/></li>
+                    <li>Feedback Management System</li>
+                </ul>
+            </a>    
+      </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a class="dropdown-toggle" href="{% static '/' %}">Home</a>
+        </li>
+        <li>
+            <a class="dropdown-toggle" href="/logout/">Logout</a>
+        </li>
+        <li>
+            <a class="dropdown-toggle" href="#">Contact</a>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+            <i class="glyphicon glyphicon-user"></i> {{name}} <span class="caret"></span></a>
+          <ul id="g-account-menu" class="dropdown-menu" role="menu">
+            <li><a href="{% url 'user_logout' %}"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>     
+    </div>
+  </div><!-- /container -->
+</div>
+<!-- /Header -->
+
+<!-- Main -->
+<div class="container" id="main_start">
+  
+  <!-- upper section -->
+  <div class="row">
+	<div class="col-sm-3">
+      <!-- left -->
+      <h3><i class="glyphicon glyphicon-briefcase"></i> Course List</h3>
+      <hr>
+      
+      <ul class="nav nav-stacked">
+        {% if courseIntegrated %}
+        {% for f in courseIntegrated %}
+        <li>
+          <a href="#" id="{{f.course.id}}" class="course_links"><i class="glyphicon glyphicon-book"></i> {{f.course}}</a>
+          <div href="#" class="survey_links" id="div{{f.course.id}}" style="display:none;padding-left:25px;">
+          {% for s in f.survey %}
+            <a href="#" id="{{s.id}}">{{s.name}}</a><br />
+          {% endfor %}
+          {%endfor%}
+          </div>
+          {%endif%}
+      </li>
+      </ul>
+      
+      <hr>
+      
+  	</div><!-- /span-3 -->
+    <div class="col-sm-9">
+      	
+      <!-- column 2 -->	
+       <h3><i class="glyphicon glyphicon-dashboard"></i> {{role}}  {% if givesurvey %} Survey: {{surveyname}} {%else%} Dashboard {%endif%} </h3>          
+       <hr>
+      
+	   <div class="row">
+            <!-- center left-->
+            
+         	<div class="col-md-7">
+            {% if messages %}
+            <div class="alert alert-info">
+              <button type="button" class="close" data-dismiss="alert">×</button>
+                {{messages}}
+            </div>            
+            {%endif%}
+            {% if not givesurvey %}  
+            <div class="well">New Notices <span class="badge pull-right">{{countNotices}}</span></div>
+            <hr>
+
+            <div class="panel panel-default">
+                  <div class="panel-heading"><h4>Feedback Status</h4></div>
+                  <div class="panel-body">
+                  
+                  {% for s in stats %}
+                    <small>{{s.course.code}}</small>
+                    <div class="progress">
+                      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{s.percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{s.percent}}%">
+                        <span class="sr-only">{{s.percent}}% Complete</span>
+                      </div>
+                    </div>
+                    {%endfor%}                    
+                  </div><!--/panel-body-->
+              </div><!--/panel-->                    
+            {% endif %}
+              
+            {% if givesurvey %}            
+            <form id="GiveSurvey" method = "POST" enctype="multipart/form-data">
+                    {% for q in form %}
+                      {% csrf_token %}
+                      <div class="list-group">
+                        <!-- <ul class="inline-list"> -->
+                          <span class = "list-group-item">Question {{forloop.counter}}) {{q.label_tag}}
+                          <br/> Answer: {{q}}</span>                         
+                      </div>
+                    {% endfor %}
+                    <input type = "submit" class="list-group" value = "Submit" id="Submit" />
+              </form>
+              <hr>
+            {%endif%}
+          	</div><!--/col-->
+            {%if not givesurvey %}
+            <!--center-right-->
+        	<div class="col-md-5">
+     
+          <div class="wrapper">
+                <div class="responsive-calendar">
+                  <div class="controls">
+                      <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
+                      <h4><span data-head-year></span> <span data-head-month></span></h4>
+                      <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
+                  </div><hr/>
+                  <div class="day-headers">
+                    <div class="day header">Mon</div>
+                    <div class="day header">Tue</div>
+                    <div class="day header">Wed</div>
+                    <div class="day header">Thu</div>
+                    <div class="day header">Fri</div>
+                    <div class="day header">Sat</div>
+                    <div class="day header">Sun</div>
+                  </div>
+                  <div class="days" data-group="days">
+                    
+                  </div>
+                </div>
+              </div>
+                <hr>
+              
+                <div class="btn-group btn-group-justified">
+                  <a id="help" class="btn btn-info col-sm-3">
+                    <i class="glyphicon glyphicon-question-sign"></i><br>
+                    Help
+                  </a>
+                </div>
+              
+			</div><!--/col-span-6-->
+     
+       </div><!--/row-->
+  	</div><!--/col-span-9-->
+    
+  </div><!--/row-->
+  <!-- /upper section -->
+  
+  <!-- lower section -->
+  <div class="row">
+    
+    <div class="col-md-12">
+      <hr>
+      <a name="notices"><strong><i class="glyphicon glyphicon-list-alt"></i> Notices</strong></a>  
+      <hr>    
+    </div>
+    <div class="col-md-8">
+      
+      <table class="table table-striped">
+        <thead>
+          <tr><th>Date</th><th>Course</th><th>Notice Content</th></tr>
+        </thead>
+        <tbody>
+          {% for f in notices %}
+          <tr>
+            <td>{{f.created_date}}</td>
+            {% for c in f.course.all %}
+            <td>{{c}}</td>
+            {%endfor%}
+            <td>{{f.content}}</td>            
+          </tr>
+        {%endfor%}
+        </tbody>
+      </table>      
+      <hr>          
+      <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        Please remember to <a href="#">Logout</a> for classified security.
+      </div>
+
+    
+    </div>
+    <div class="col-md-4">
+      
+      <hr>
+              
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="panel-title">
+            <i class="glyphicon glyphicon-wrench pull-right"></i>
+            <h4>Submit Request</h4>
+          </div>
+        </div>
+        <div class="panel-body">
+          
+          <form class="form form-vertical">
+            <div class="control-group">
+              <label>Name</label>
+              <div class="controls">
+                <input type="text" class="form-control" placeholder="Enter Name">
+              </div>
+            </div>      
+            <div class="control-group">
+              <label>Title</label>
+              <div class="controls">
+                <input type="password" class="form-control" placeholder="Password">
+                
+              </div>
+            </div>   
+            <div class="control-group">
+              <label>Details</label>
+              <div class="controls">
+                <textarea class="form-control"></textarea>
+              </div>
+            </div> 
+            <div class="control-group">
+              <label>Select</label>
+              <div class="controls">
+                <select class="form-control"><option>General Question</option><option>Server Issues</option><option>Billing Question</option></select>
+              </div>
+            </div>    
+            <div class="control-group">
+              <label></label>
+              <div class="controls">
+                <button type="submit" class="btn btn-primary">
+                  Post
+                </button>
+              </div>
+            </div>   
+            
+          </form>
+          
+          
+        </div><!--/panel content-->
+      </div><!--/panel-->
+      
+        {%endif%}
+    
+    </div><!--/col-->
+    
+  </div><!--/row-->
+
+</div><!--/container-->
+<!-- /Main -->
+
+<script>
+(function() {
+
+  (function($) {
+    "use strict";
+    var Calendar, opts, spy;
+    Calendar = function(element, options) {
+      var time;
+      this.$element = element;
+      this.options = options;
+      this.weekDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+      this.time = new Date();
+      this.currentYear = this.time.getFullYear();
+      this.currentMonth = this.time.getMonth();
+      if (this.options.time) {
+        time = this.splitDateString(this.options.time);
+        this.currentYear = time.year;
+        this.currentMonth = time.month;
+      }
+      this.initialDraw();
+      return null;
+    };
+    Calendar.prototype = {
+      addLeadingZero: function(num) {
+        if (num < 10) {
+          return "0" + num;
+        } else {
+          return "" + num;
+        }
+      },
+      applyTransition: function($el, transition) {
+        $el.css('transition', transition);
+        $el.css('-ms-transition', '-ms-' + transition);
+        $el.css('-moz-transition', '-moz-' + transition);
+        return $el.css('-webkit-transition', '-webkit-' + transition);
+      },
+      applyBackfaceVisibility: function($el) {
+        $el.css('backface-visibility', 'hidden');
+        $el.css('-ms-backface-visibility', 'hidden');
+        $el.css('-moz-backface-visibility', 'hidden');
+        return $el.css('-webkit-backface-visibility', 'hidden');
+      },
+      applyTransform: function($el, transform) {
+        $el.css('transform', transform);
+        $el.css('-ms-transform', transform);
+        $el.css('-moz-transform', transform);
+        return $el.css('-webkit-transform', transform);
+      },
+      splitDateString: function(dateString) {
+        var day, month, time, year;
+        time = dateString.split('-');
+        year = parseInt(time[0]);
+        month = parseInt(time[1] - 1);
+        day = parseInt(time[2]);
+        return time = {
+          year: year,
+          month: month,
+          day: day
+        };
+      },
+      initialDraw: function() {
+        return this.drawDays(this.currentYear, this.currentMonth);
+      },
+      editDays: function(events) {
+        var dateString, day, dayEvents, time, _results;
+        _results = [];
+        for (dateString in events) {
+          dayEvents = events[dateString];
+          this.options.events[dateString] = events[dateString];
+          time = this.splitDateString(dateString);
+          day = this.$element.find('[data-year="' + time.year + '"][data-month="' + (time.month + 1) + '"][data-day="' + time.day + '"]').parent('.day');
+          day.removeClass('active');
+          day.find('.badge').remove();
+          day.find('a').removeAttr('href');
+          if (this.currentMonth === time.month || this.options.activateNonCurrentMonths) {
+            _results.push(this.makeActive(day, dayEvents));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      },
+      clearDays: function(days) {
+        var dateString, day, time, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = days.length; _i < _len; _i++) {
+          dateString = days[_i];
+          delete this.options.events[dateString];
+          time = this.splitDateString(dateString);
+          day = this.$element.find('[data-year="' + time.year + '"][data-month="' + (time.month + 1) + '"][data-day="' + time.day + '"]').parent('.day');
+          day.removeClass('active');
+          day.find('.badge').remove();
+          _results.push(day.find('a').removeAttr('href'));
+        }
+        return _results;
+      },
+      clearAll: function() {
+        var day, days, i, _i, _len, _results;
+        this.options.events = {};
+        days = this.$element.find('[data-group="days"] .day');
+        _results = [];
+        for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
+          day = days[i];
+          $(day).removeClass('active');
+          $(day).find('.badge').remove();
+          _results.push($(day).find('a').removeAttr('href'));
+        }
+        return _results;
+      },
+      setMonth: function(dateString) {
+        var time;
+        time = this.splitDateString(dateString);
+        return this.currentMonth = this.drawDays(time.year, time.month);
+      },
+      prev: function() {
+        if (this.currentMonth - 1 < 0) {
+          this.currentYear = this.currentYear - 1;
+          this.currentMonth = 11;
+        } else {
+          this.currentMonth = this.currentMonth - 1;
+        }
+        this.drawDays(this.currentYear, this.currentMonth);
+        if (this.options.onMonthChange) {
+          this.options.onMonthChange.call(this);
+        }
+        return null;
+      },
+      next: function() {
+        if (this.currentMonth + 1 > 11) {
+          this.currentYear = this.currentYear + 1;
+          this.currentMonth = 0;
+        } else {
+          this.currentMonth = this.currentMonth + 1;
+        }
+        this.drawDays(this.currentYear, this.currentMonth);
+        if (this.options.onMonthChange) {
+          this.options.onMonthChange.call(this);
+        }
+        return null;
+      },
+      curr: function() {
+        this.currentYear = this.time.getFullYear();
+        this.currentMonth = this.time.getMonth();
+        this.drawDays(this.currentYear, this.currentMonth);
+        if (this.options.onMonthChange) {
+          this.options.onMonthChange.call(this);
+        }
+        return null;
+      },
+      addOthers: function(day, dayEvents) {
+        var badge;
+        if (typeof dayEvents === "object") {
+          if (dayEvents.number != null) {
+            badge = $("<span></span>").html(dayEvents.number).addClass("badge");
+            if (dayEvents.badgeClass != null) {
+              badge.addClass(dayEvents.badgeClass);
+            }
+            day.append(badge);
+          }
+          if (dayEvents.url) {
+            day.find("a").attr("href", dayEvents.url);
+          }
+        }
+        return day;
+      },
+      makeActive: function(day, dayEvents) {
+        var classes, eventClass, i, _i, _len;
+        if (dayEvents) {
+          if (dayEvents["class"]) {
+            classes = dayEvents["class"].split(" ");
+            for (i = _i = 0, _len = classes.length; _i < _len; i = ++_i) {
+              eventClass = classes[i];
+              day.addClass(eventClass);
+            }
+          } else {
+            day.addClass("active");
+          }
+          day = this.addOthers(day, dayEvents);
+        }
+        return day;
+      },
+      getDaysInMonth: function(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+      },
+      drawDay: function(lastDayOfMonth, yearNum, monthNum, dayNum, i) {
+        var calcDate, dateNow, dateString, day, dayDate, pastFutureClass;
+        day = $("<div></div>").addClass("day");
+        dateNow = new Date();
+        dateNow.setHours(0, 0, 0, 0);
+        dayDate = new Date(yearNum, monthNum - 1, dayNum);
+        if (dayDate.getTime() < dateNow.getTime()) {
+          pastFutureClass = "past";
+        } else if (dayDate.getTime() === dateNow.getTime()) {
+          pastFutureClass = "today";
+        } else {
+          pastFutureClass = "future";
+        }
+        day.addClass(this.weekDays[i % 7]);
+        day.addClass(pastFutureClass);
+        dateString = yearNum + "-" + this.addLeadingZero(monthNum) + "-" + this.addLeadingZero(dayNum);
+        if (dayNum <= 0 || dayNum > lastDayOfMonth) {
+          calcDate = new Date(yearNum, monthNum - 1, dayNum);
+          dayNum = calcDate.getDate();
+          monthNum = calcDate.getMonth() + 1;
+          yearNum = calcDate.getFullYear();
+          day.addClass("not-current").addClass(pastFutureClass);
+          if (this.options.activateNonCurrentMonths) {
+            dateString = yearNum + "-" + this.addLeadingZero(monthNum) + "-" + this.addLeadingZero(dayNum);
+          }
+        }
+        day.append($("<a>" + dayNum + "</a>").attr("data-day", dayNum).attr("data-month", monthNum).attr("data-year", yearNum));
+        if (this.options.monthChangeAnimation) {
+          this.applyTransform(day, 'rotateY(180deg)');
+          this.applyBackfaceVisibility(day);
+        }
+        day = this.makeActive(day, this.options.events[dateString]);
+        return this.$element.find('[data-group="days"]').append(day);
+      },
+      drawDays: function(year, month) {
+        var currentMonth, day, dayBase, days, delay, draw, firstDayOfMonth, i, lastDayOfMonth, loopBase, monthNum, multiplier, thisRef, time, timeout, yearNum, _i, _len;
+        thisRef = this;
+        time = new Date(year, month);
+        currentMonth = time.getMonth();
+        monthNum = time.getMonth() + 1;
+        yearNum = time.getFullYear();
+        time.setDate(1);
+        firstDayOfMonth = this.options.startFromSunday ? time.getDay() + 1 : time.getDay() || 7;
+        lastDayOfMonth = this.getDaysInMonth(year, month);
+        timeout = 0;
+        if (this.options.monthChangeAnimation) {
+          days = this.$element.find('[data-group="days"] .day');
+          for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
+            day = days[i];
+            delay = i * 0.01;
+            this.applyTransition($(day), 'transform .5s ease ' + delay + 's');
+            this.applyTransform($(day), 'rotateY(180deg)');
+            this.applyBackfaceVisibility($(day));
+            timeout = (delay + 0.1) * 1000;
+          }
+        }
+        dayBase = 2;
+        if (this.options.allRows) {
+          loopBase = 42;
+        } else {
+          multiplier = Math.ceil((firstDayOfMonth - (dayBase - 1) + lastDayOfMonth) / 7);
+          loopBase = multiplier * 7;
+        }
+        this.$element.find("[data-head-year]").html(time.getFullYear());
+        this.$element.find("[data-head-month]").html(this.options.translateMonths[time.getMonth()]);
+        draw = function() {
+          var dayNum, setEvents;
+          thisRef.$element.find('[data-group="days"]').empty();
+          dayNum = dayBase - firstDayOfMonth;
+          i = thisRef.options.startFromSunday ? 0 : 1;
+          while (dayNum < loopBase - firstDayOfMonth + dayBase) {
+            thisRef.drawDay(lastDayOfMonth, yearNum, monthNum, dayNum, i);
+            dayNum = dayNum + 1;
+            i = i + 1;
+          }
+          setEvents = function() {
+            var _j, _len1;
+            days = thisRef.$element.find('[data-group="days"] .day');
+            for (i = _j = 0, _len1 = days.length; _j < _len1; i = ++_j) {
+              day = days[i];
+              thisRef.applyTransition($(day), 'transform .5s ease ' + (i * 0.01) + 's');
+              thisRef.applyTransform($(day), 'rotateY(0deg)');
+            }
+            if (thisRef.options.onDayClick) {
+              thisRef.$element.find('[data-group="days"] .day a').click(function() {
+                return thisRef.options.onDayClick.call(this, thisRef.options.events);
+              });
+            }
+            if (thisRef.options.onDayHover) {
+              thisRef.$element.find('[data-group="days"] .day a').hover(function() {
+                return thisRef.options.onDayHover.call(this, thisRef.options.events);
+              });
+            }
+            if (thisRef.options.onActiveDayClick) {
+              thisRef.$element.find('[data-group="days"] .day.active a').click(function() {
+                return thisRef.options.onActiveDayClick.call(this, thisRef.options.events);
+              });
+            }
+            if (thisRef.options.onActiveDayHover) {
+              return thisRef.$element.find('[data-group="days"] .day.active a').hover(function() {
+                return thisRef.options.onActiveDayHover.call(this, thisRef.options.events);
+              });
+            }
+          };
+          return setTimeout(setEvents, 0);
+        };
+        setTimeout(draw, timeout);
+        return currentMonth;
+      }
+    };
+    $.fn.responsiveCalendar = function(option, params) {
+      var init, options, publicFunc;
+      options = $.extend({}, $.fn.responsiveCalendar.defaults, typeof option === 'object' && option);
+      publicFunc = {
+        next: 'next',
+        prev: 'prev',
+        edit: 'editDays',
+        clear: 'clearDays',
+        clearAll: 'clearAll',
+        getYearMonth: 'getYearMonth',
+        jump: 'jump',
+        curr: 'curr'
+      };
+      init = function($this) {
+        var data;
+        options = $.metadata ? $.extend({}, options, $this.metadata()) : options;
+        $this.data('calendar', (data = new Calendar($this, options)));
+        if (options.onInit) {
+          options.onInit.call(data);
+        }
+        return $this.find("[data-go]").click(function() {
+          if ($(this).data("go") === "prev") {
+            data.prev();
+          }
+          if ($(this).data("go") === "next") {
+            return data.next();
+          }
+        });
+      };
+      return this.each(function() {
+        var $this, data;
+        $this = $(this);
+        data = $this.data('calendar');
+        if (!data) {
+          init($this);
+        } else if (typeof option === 'string') {
+          if (publicFunc[option] != null) {
+            data[publicFunc[option]](params);
+          } else {
+            data.setMonth(option);
+          }
+        } else if (typeof option === 'number') {
+          data.jump(Math.abs(option) + 1);
+        }
+        return null;
+      });
+    };
+    $.fn.responsiveCalendar.defaults = {
+      translateMonths: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      events: {},
+      time: void 0,
+      allRows: true,
+      startFromSunday: false,
+      activateNonCurrentMonths: false,
+      monthChangeAnimation: true,
+      onInit: void 0,
+      onDayClick: void 0,
+      onDayHover: void 0,
+      onActiveDayClick: void 0,
+      onActiveDayHover: void 0,
+      onMonthChange: void 0
+    };
+    spy = $('[data-spy="responsive-calendar"]');
+    if (spy.length) {
+      opts = {};
+      if ((spy.data('translate-months')) != null) {
+        opts.translateMonths = spy.data('translate-months').split(',');
+      }
+      if ((spy.data('time')) != null) {
+        opts.time = spy.data('time');
+      }
+      if ((spy.data('all-rows')) != null) {
+        opts.allRows = spy.data('all-rows');
+      }
+      if ((spy.data('start-from-sunday')) != null) {
+        opts.startFromSunday = spy.data('start-from-sunday');
+      }
+      if ((spy.data('activate-non-current-months')) != null) {
+        opts.activateNonCurrentMonths = spy.data('activate-non-current-months');
+      }
+      if ((spy.data('month-change-animation')) != null) {
+        opts.monthChangeAnimation = spy.data('month-change-animation');
+      }
+      return spy.responsiveCalendar(opts);
+    }
+  })(jQuery);
+
+}).call(this);
+</script>
+
+
+<script>
+
+ $( document ).ready(function() {
+    window.curCourse=-1;    
+    $(".responsive-calendar").responsiveCalendar({
+          time: '2013-05',
+          events: {
+            "2013-04-30": {"number": 5, "url": "http://w3widgets.com/responsive-slider"},
+            "2013-04-26": {"number": 1, "url": "http://w3widgets.com"}, 
+            "2013-05-03":{"number": 1}, 
+            "2013-06-12": {}}
+        });
+    console.log("here");
+  });
+
+   $("#help").click(function(){
+    alert("Please refer to user manual");
+  });
+
+  $("#settings").click(function(){
+  });
+
+  $(".course_links").click(function(e){
+    $("#div"+e.target.id).toggle("slow");
+  });
+
+  $(".survey_links").click(function(e){
+    window.location.replace("/givesurvey/"+e.target.id);
+  }); 
+
+  $(document).ready(function () {
+    
+    function updateElementIndex(el, prefix, ndx) {
+    //alert(Object.getOwnPropertyNames(el));
+        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+        var replacement = prefix + '-' + ndx + '-';
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+    if (el.name) el.name = el.name.replace(id_regex, replacement);
+    
+  }
+
+    function deleteForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+            // Delete the item/form
+            $(btn).parents('.item').hide("slow", function(){
+              $(btn).parents('.item').remove();
+              var forms = $('.item'); // Get all the forms  
+            // Update the total number of forms (1 less than before)
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            var i = 0;
+            // Go through the forms and set their indices, names and IDs
+            for (formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).children().children().each(function () {
+                    if ($(this).attr('type') == 'text') updateElementIndex(this, prefix, i);
+                });
+              }            
+            });
+        } // End if
+        else {
+            alert("You have to enter at least one Question. !");
+        }
+        return false;
+    }
+
+    function addForm(btn, prefix) {
+    
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        console.log($('#id_' + prefix + '-TOTAL_FORMS'));
+    //alert('#id_' + prefix + '-TOTAL_FORMS');
+        // You can only submit a maximum of 10 todo items 
+        if (formCount < 10) {
+            // Clone a form (without event handlers) from the first form
+            var row = $(".item:first").clone(false).get(0);
+            
+            $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+
+            // Relabel or rename all the relevant bits
+            $(row).children().children().children().each(function () {
+                updateElementIndex(this, prefix, formCount);
+                $(this).val("");
+            });
+
+            // Add an event handler for the delete item/form link 
+            $(row).find(".delete").click(function () {
+                return deleteForm(this, prefix);
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+        } // End if
+        else {
+            alert("Sorry, you can only enter a maximum of ten questions.");
+        }
+        return false;
+    }
+    // Register the click event handlers
+    $("#add").click(function () {
+      return addForm(this, "form");
+    });
+
+    $(".delete").click(function () {
+        return deleteForm(this, "form");
+    });
+});
+</script>  
+
+<!-- Footer -->
+    <footer >
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#home">Home</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#about">About</a>
+                        </li>                        
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted small">IIT Guwahati. CS241 Project</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+	</body>
+</html>

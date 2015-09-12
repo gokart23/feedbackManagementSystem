@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IIT Guwahati Feedback Management System</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/landing-page.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+
+    <!-- Custom Fonts -->
+    <link href="{% static 'font-awesome-4.2.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/modal_style.css' %}" />
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- <script src="main/js/jquery.js"></script> -->
+    <script type="text/javascript" src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.leanModal.min.js' %}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <script>
+        $("#login_submit").click(function(){            
+            console.log("data submitted");
+        });
+    </script>
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    {% csrf_token %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand logo" href="http://www.iitg.ernet.in">
+                    <ul class="list-inline">
+                        <li><img src="{% static 'img/iitg_web_mid.gif' %}" height="35px" width="35px" alt="IIT Guwahati Logo"/></li>
+                        <li>Feedback Management System</li>
+                    </ul>
+                </a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a id="modal_trigger" href="#modal">Login</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Header -->
+    <div class="intro-header">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-message">
+                        <h1>IIT Guwahati Feedback Management System</h1>
+                        <h4>CS241 Course Project</h4>
+                        <hr class="intro-divider">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    <!-- /.intro-header -->
+
+    <!-- Page Content -->
+
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">We value your opinion!</h2>
+                    <p class="lead">IIT Guwahati takes its feedback system very seriously. Every year, students are strongly encouraged to put forward their views regarding improvements that can be made to the system</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/ipad.png' %}" alt="">
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    <!-- /.content-section-a -->
+
+    
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Speak.Listen.Learn.</h2>
+                    <p class="lead">IIT Guwahati is a firm believer in the ability of its students to foster change in the campus, and to this end, a dedicated Feedback Management System has been put in place in order to accomplish this task.</p>
+                </div>
+                <div class="col-lg-3 col-sm-pull-6  col-sm-4">
+                    <img class="img-responsive" src="{% static 'img/feedback.jpg' %}" alt="">
+                </div>
+            </div>
+
+        </div>
+ 
+        
+    </div>
+    <!-- Login modal dialog code -->
+    <div id="modal" class="popupContainer" style="display:none;">
+        <header class="popupHeader">
+            <span class="header_title">Login</span>
+            <span class="modal_close"><i class="fa fa-times"></i></span>
+        </header>
+        
+        <section class="popupBody">
+            <div class="user_login">
+                <form id="login_form" method="POST" action="{% url 'landingPage' %}">
+                    {% csrf_token %}
+                    {% for f in form %}
+                    <div>
+                        {{f.label_tag}} {{f}}
+                    <br />
+                    </div>
+                    {% endfor %}
+                    <div class="action_btns">
+                        <div class="one_half last"><input type="submit" value="Login" class="btn btn_red" /></div>
+                    </div>
+                </form>
+            </div>
+
+            
+        </section>
+    </div>    
+
+    
+    <!-- /.content-section-b -->
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#about">About</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted small">CS241 Project - Karthik Meher, Mohit Chhajed, Rishabh Dubey</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <!-- <script src="js/jquery.js"></script> -->
+    <script type="text/javascript">
+        $("#modal_trigger").leanModal({top : 200, overlay : 0.6, closeButton: ".modal_close" });
+    </script>    
+</body>
+
+</html>

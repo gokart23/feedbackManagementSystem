@@ -1,0 +1,15 @@
+<html>
+<form id="login" method="POST">
+{% csrf_token %}
+{{ac}}
+{{login.non_field_errors}}
+{% for f in form %}
+<div>
+{{f.label_tag}} {{f}}
+<br />
+<br />
+</div>
+{% endfor %}
+<input type="submit" value="Submit" id="submit_button" />
+</form>
+</html>

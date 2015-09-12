@@ -1,0 +1,95 @@
+<form id="questions" method = "POST" action="{{action}}" enctype="multipart/form-data">
+{{ question_formset.management_form }}
+{% for question in question_formset.forms %}
+	{% csrf_token %}
+	<div class="item">
+	{{question.as_p}}
+		<a class="delete" href="#">Delete</a>
+	</div>
+{% endfor %}
+<div class="sign"><a id="add" href="#">Add</a></div>
+<br/>
+<input type = "submit" value = "Submit" id="Submit" />
+</form>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" >
+	$(document).ready(function () {
+    
+    function updateElementIndex(el, prefix, ndx) {
+		//alert(Object.getOwnPropertyNames(el));
+        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+        var replacement = prefix + '-' + ndx + '-';
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+		if (el.name) el.name = el.name.replace(id_regex, replacement);
+		
+	}
+
+    function deleteForm(btn, prefix) {
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (formCount > 1) {
+            // Delete the item/form
+            $(btn).parents('.item').remove();
+            var forms = $('.item'); // Get all the forms  
+            // Update the total number of forms (1 less than before)
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            var i = 0;
+            // Go through the forms and set their indices, names and IDs
+            for (formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).children().children().each(function () {
+                    if ($(this).attr('type') == 'text') updateElementIndex(this, prefix, i);
+                });
+            }
+        } // End if
+        else {
+            alert("You have to enter at least one Question. !");
+        }
+        return false;
+    }
+
+    function addForm(btn, prefix) {
+		
+        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        console.log($('#id_' + prefix + '-TOTAL_FORMS'));
+		//alert('#id_' + prefix + '-TOTAL_FORMS');
+        // You can only submit a maximum of 10 todo items 
+        if (formCount < 10) {
+            // Clone a form (without event handlers) from the first form
+            var row = $(".item:first").clone(false).get(0);
+            
+            $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+
+            // Remove the bits we don't want in the new row/form
+            // e.g. error messages
+            $(".errorlist", row).remove();
+            $(row).children().removeClass("error");
+
+            // Relabel or rename all the relevant bits
+            $(row).children().children().children().each(function () {
+                updateElementIndex(this, prefix, formCount);
+                $(this).val("");
+            });
+
+            // Add an event handler for the delete item/form link 
+            $(row).find(".delete").click(function () {
+                return deleteForm(this, prefix);
+            });
+            // Update the total form count
+            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
+        } // End if
+        else {
+            alert("Sorry, you can only enter a maximum of ten questions.");
+        }
+        return false;
+    }
+    // Register the click event handlers
+    $("#add").click(function () {
+    	return addForm(this, "form");
+    });
+
+    $(".delete").click(function () {
+        return deleteForm(this, "form");
+    });
+});
+</script>
